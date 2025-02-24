@@ -2,18 +2,18 @@
 
 ## Qt布局器管理内存
 
-- [ ] 布局器的使用会管理所布局的窗口，注意窗口的二次析构问题；
+- 布局器的使用会管理所布局的窗口，注意窗口的二次析构问题；
 
 ## C++11
 
-- [ ] decltype 自动表达式推导
+- decltype 自动表达式推导
 
 ```
 int a = 10, b = 9;
 declatype(a+b) c = 0;
 ```
 
-- [ ] 深浅拷贝
+- 深浅拷贝
 
 ```
 //浅拷贝
@@ -24,6 +24,35 @@ declatype(a+b) c = 0;
 在类中成员变量被声明为指针类型的，需要在拷贝构造函数中进行新的内存地址的拷贝；
 如果只是简单的值拷贝则会使得指针指向同一份内存地址中；应该为该变量重新分配内存地址；
 ```
+
+- 保存图片（opencv和QImage）
+
+要保存不压缩的图片文件，是需要额外设置参数的，opencv 和 QImage 都是这样
+
+```
+// opencv:
+    qDebug() << "start...";
+    cv::Mat c = imread("BoardRef-0.tif", IMREAD_COLOR);
+    qDebug() << "opencv large loaded.";
+    // TIFF 编码压缩方式设置为不压缩：
+    std::vector<int> params;// params 添加顺修不可反
+    params.push_back(IMWRITE_TIFF_COMPRESSION); // TIFF 编码压缩方式设置
+    params.push_back(1); // 不压缩
+    imwrite("BoardRef-0-copy-large-opencv.tif", c, params); // 写文件时传入设置好的参数列表
+    qDebug() << "uncompressed saved.";
+    qDebug() << "done.";
+
+
+// qimage:
+    QImageReader::setAllocationLimit(4000);
+    qDebug() << "start...";
+    QImage qimage("BoardRef-B.tif");
+    qDebug() << "qimage large loaded.";
+    qimage.save("BoardRef-B-large-qimage-copy.tif", nullptr, 100); // 第三个参数，设置压缩率为不压缩（0为压缩到最小，100为最大不压缩）
+    qDebug() << "done.";
+```
+
+
 
 ## Qt 模型-视图-委托（Model-View-Delegate）架构
 
@@ -52,7 +81,7 @@ declatype(a+b) c = 0;
 # CMake记录
 
 ```
-// vs 调试信息不为乱码
+// vs 调试信息不为乱码（命令行）
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 // 命令行窗口输出中文不乱码
