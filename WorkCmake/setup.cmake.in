@@ -1,0 +1,43 @@
+# This is a cmake file that auto setup for convenience local test to target link.
+
+# 使用方式 在需要的项目中增加一下代码
+# string(TOLOWER ${LIB_NAME} LOWER_LIB_NAME) # 小写
+# string(TOLOWER ${LOWER_LIB_NAME} VAR_PREFIX)
+# configure_file(
+#     "${CMAKE_CURRENT_SOURCE_DIR}/../setup.cmake.in"
+#     "${CMAKE_SOURCE_DIR}/install/${PROJECT_NAME}/${PROJECT_NAME}.cmake"
+#     @ONLY
+# )
+# 
+# include(${CMAKE_SOURCE_DIR}/../insparam/install/LibParam/LibParam.cmake)
+# if(CMAKE_BUILD_TYPE STREQUAL "Release")
+#     find_library(LIBPARAM LibParam REQUIRED PATHS ${libparam_LIB_DIRS})
+# else()
+#     find_library(LIBPARAM LibParamd REQUIRED PATHS ${libparam_LIB_DIRS})
+# endif()
+# include_directories(${libparam_INCLUDE_DIRS})
+# set(LOCALLIBS
+#     ${LIBPARAM}
+# )
+# 
+# target_link_libraries(${PROJECT_NAME}
+#     PRIVATE
+#     ${LOCALLIBS})
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(@VAR_PREFIX@_DIR "${CMAKE_CURRENT_LIST_DIR}/Debug")
+    set(@VAR_PREFIX@_INCLUDE_DIRS "${@VAR_PREFIX@_DIR}/include")
+    set(@VAR_PREFIX@_LIB_DIRS "${@VAR_PREFIX@_DIR}/lib/@LIB_NAME@d.lib")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(@VAR_PREFIX@_DIR "${CMAKE_CURRENT_LIST_DIR}/Release")
+    set(@VAR_PREFIX@_INCLUDE_DIRS "${@VAR_PREFIX@_DIR}/include")
+    set(@VAR_PREFIX@_LIB_DIRS "${@VAR_PREFIX@_DIR}/lib/@LIB_NAME@.lib")
+endif()
+
+set(@VAR_PREFIX@_LIB_DIRS "${@VAR_PREFIX@_DIR}/lib")
+
+include_directories(@VAR_PREFIX@_INCLUDE_DIRS)
+
+message(STATUS "auto setup Type Dir:" @VAR_PREFIX@_DIR)
+message(STATUS "auto setup lib include Path:" @VAR_PREFIX@_LIBRARIES)
+message(STATUS "auto setup lib *.lib Path:" @VAR_PREFIX@_LIB_DIRS)
